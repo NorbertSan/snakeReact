@@ -1,0 +1,24 @@
+* {
+    /* box-sizing: border-box; */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background: #eee;
+}
+
+.board {
+    border: 2px solid black;
+    background: #ddd;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.square:nth-child(even) {
+    background: grey;
+}
