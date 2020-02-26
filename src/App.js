@@ -24,7 +24,7 @@ class App extends React.Component {
     this.start();
   }
   async start() {
-    this.keysListeners();
+    this.keyController();
     await this.initializeState();
     this.game();
   }
@@ -38,26 +38,55 @@ class App extends React.Component {
     const snakeBody = [startPosition];
     this.setState({
       board,
-      snakeBody
+      snakeBody,
+      gameOver: false
     });
   }
 
   game() {
     const moveSnake = async () => {
+      // 5 upgrade state board
       // 1. change snake position, remove last position in array and add new to the beginning
       // 2. respawn food if it is not on the table
       // 3 check if snake bite itself
       // 4 check if snake eat food
-      // 5 upgrade state board
       this.upgradeBoard();
       const nextPosition = this.getNextMovePosition();
       this.removeTailAndAddNewHead(nextPosition);
       this.spawnFood();
+      this.gameOverController();
+      this.eatFoodController();
+      if (this.state.gameOver) {
+        clearInterval(timer);
+        this.start();
+      }
     };
     const timer = setInterval(moveSnake, 100);
   }
 
-  keysListeners() {
+  eatFoodController() {
+    const { foodPlace, snakeBody } = this.state;
+    const head = snakeBody[0];
+    if (foodPlace.includes(head)) {
+      // if eat food
+      // 1. remove food from table
+      // 2. enlarge snake
+      foodPlace.pop();
+      snakeBody.push(head);
+    }
+  }
+
+  gameOverController() {
+    const { snakeBody } = this.state;
+    const length = snakeBody.length;
+    if (length !== new Set(snakeBody).size) {
+      this.setState({
+        gameOver: true
+      });
+    }
+  }
+
+  keyController() {
     document.addEventListener("keydown", e => {
       const oldDirection = this.state.direction;
       let newDirection;
