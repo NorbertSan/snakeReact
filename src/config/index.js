@@ -1,4 +1,4 @@
-export const tableSize = 15; //
+export const tableSize = 11; //
 export const snakeColor = "red";
 export const startPosition = 0;
 export const arrowCode = {
