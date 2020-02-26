@@ -16,8 +16,7 @@ class App extends React.Component {
     direction: arrowCode.up,
     snakeBody: [],
     board: [],
-    gameOver: false,
-    food: []
+    gameOver: false
   };
 
   componentDidMount() {
@@ -25,7 +24,11 @@ class App extends React.Component {
   }
   start() {
     const board = [];
-    board = board[startPosition] = true;
+    for (let i = 0; i < tableSize * (tableSize - 1); i++) {
+      board[i] = null;
+    }
+    board[startPosition] = BODY;
+    // board[4] = FOOD;
     const snakeBody = [startPosition];
     this.setState(
       {
@@ -40,12 +43,10 @@ class App extends React.Component {
     const moveSnake = async () => {
       const nextPosition = this.getNextMovePosition();
       await this.removeTailAndAddNewHead(nextPosition);
-      if (this.state.food.length === 0) {
-        this.spawnFood();
-      }
+      this.spawnFood();
     };
 
-    const timer = setInterval(moveSnake, 1000);
+    const timer = setInterval(moveSnake, 1500);
   }
 
   removeTailAndAddNewHead(nextPosition) {
@@ -106,8 +107,23 @@ class App extends React.Component {
   }
 
   spawnFood() {
-    // available squares means that is empty place, no snake, no food
-    // const snake = this.state.snakeBody;
+    const board = this.state.board;
+    const food = board.filter(square => square === 2);
+    if (food.length === 0) {
+      const availablePlace = board.reduce((result, element, index) => {
+        if (element === null) return [...result, index];
+        return result;
+      }, []);
+      // now i have in availablePlace index of empty squares
+      const freeSquares = availablePlace.length;
+      const foodSquare = Math.round(Math.random() * freeSquares);
+      const squareIndex = availablePlace[foodSquare];
+      board[squareIndex] = FOOD;
+      console.log(squareIndex);
+      this.setState({
+        board
+      });
+    }
   }
 
   render() {
