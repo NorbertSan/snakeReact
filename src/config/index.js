@@ -1,6 +1,6 @@
 export const tableSize = 13; //
 export const snakeColor = "red";
-export const startPosition = 6;
+export const startPosition = 0;
 export const arrowCode = {
   left: 37,
   right: 39,

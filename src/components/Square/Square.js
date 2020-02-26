@@ -1,14 +1,13 @@
 import React from "react";
 import { widthSquare, snakeColor, tableSize, BODY, FOOD } from "../../config";
 
-const Square = ({ board }) => {
+const Square = ({ board, head, tail }) => {
   const squares = [];
   for (let i = 0; i < tableSize; i++) {
     for (let j = 0; j < tableSize; j++) {
       squares.push(
         <div
           style={{ width: widthSquare, height: widthSquare }}
-          // className="square"
           className={
             board[i * tableSize + j] === BODY
               ? "snakeBody square"

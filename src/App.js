@@ -1,6 +1,7 @@
 import React from "react";
 import "./style.css";
 import Square from "./components/Square/Square";
+import Header from "./components/Header/Header";
 import {
   tableSize,
   snakeColor,
@@ -17,7 +18,8 @@ class App extends React.Component {
     snakeBody: [],
     board: [],
     gameOver: false,
-    foodPlace: []
+    foodPlace: [],
+    bestScore: 0
   };
 
   componentDidMount() {
@@ -25,8 +27,29 @@ class App extends React.Component {
   }
   async start() {
     this.keyController();
+    this.getBestScoreFromLocaleStorage();
     await this.initializeState();
     this.game();
+  }
+
+  setBestScoreToLocaleStorage() {
+    localStorage.setItem("bestscore", this.state.bestScore);
+  }
+
+  getBestScoreFromLocaleStorage() {
+    const bestScore = localStorage.getItem("bestscore");
+    if (bestScore) {
+      // get from locastorage and set to state
+
+      const value = parseInt(bestScore);
+      console.log(value);
+      this.setState({
+        bestScore: value
+      });
+    } else {
+      // initialize local storage
+      localStorage.setItem("bestscore", 0);
+    }
   }
 
   initializeState() {
@@ -65,14 +88,20 @@ class App extends React.Component {
   }
 
   eatFoodController() {
-    const { foodPlace, snakeBody } = this.state;
+    const { foodPlace, snakeBody, bestScore } = this.state;
     const head = snakeBody[0];
     if (foodPlace.includes(head)) {
       // if eat food
       // 1. remove food from table
       // 2. enlarge snake
+      // 3. check if present score is > bestscore
       foodPlace.pop();
       snakeBody.push(head);
+      if (snakeBody.length > bestScore) {
+        this.setState({
+          bestScore: snakeBody.length
+        });
+      }
     }
   }
 
@@ -80,6 +109,8 @@ class App extends React.Component {
     const { snakeBody } = this.state;
     const length = snakeBody.length;
     if (length !== new Set(snakeBody).size) {
+      // game over
+      this.setBestScoreToLocaleStorage();
       this.setState({
         gameOver: true
       });
@@ -200,7 +231,19 @@ class App extends React.Component {
   }
 
   render() {
-    return <Square board={this.state.board} />;
+    return (
+      <>
+        <Header
+          score={this.state.snakeBody.length}
+          bestScore={this.state.bestScore}
+        />
+        <Square
+          board={this.state.board}
+          head={this.state.snakeBody[0]}
+          tail={this.state.snakeBody[this.state.snakeBody.length - 1]}
+        />
+      </>
+    );
   }
 }
 
