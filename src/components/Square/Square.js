@@ -1,7 +1,7 @@
 import React from "react";
 import { widthSquare, snakeColor, tableSize, BODY, FOOD } from "../../config";
 
-const Square = ({ board, head, tail }) => {
+const Square = ({ board, head }) => {
   const squares = [];
   for (let i = 0; i < tableSize; i++) {
     for (let j = 0; j < tableSize; j++) {
@@ -9,7 +9,9 @@ const Square = ({ board, head, tail }) => {
         <div
           style={{ width: widthSquare, height: widthSquare }}
           className={
-            board[i * tableSize + j] === BODY
+            i * tableSize + j === head
+              ? "head square"
+              : board[i * tableSize + j] === BODY
               ? "snakeBody square"
               : board[i * tableSize + j] === FOOD
               ? "food square"
