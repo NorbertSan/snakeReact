@@ -41,11 +41,11 @@ body {
     /* background: greenyellow url('./assets/icons/fruit.svg') no-repeat center /cover !important;
     background-size: 70% !important; */
 
-    background: greenyellow url('./assets/icons/karol.jpg') no-repeat center /cover !important;
+    background: greenyellow url('./assets/icons/oliwia.jpg') no-repeat center /cover !important;
 }
 
 .head {
-    background: greenyellow url('./assets/icons/januszRys.jpg') no-repeat center /cover !important;
+    background: greenyellow url('./assets/icons/norbert.jpg') no-repeat center /cover !important;
     position: relative;
     z-index: 9;
 }
