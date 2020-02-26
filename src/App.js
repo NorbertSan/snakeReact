@@ -13,40 +13,83 @@ import {
 
 class App extends React.Component {
   state = {
-    direction: arrowCode.up,
+    direction: arrowCode.down,
     snakeBody: [],
     board: [],
-    gameOver: false
+    gameOver: false,
+    foodPlace: []
   };
 
   componentDidMount() {
     this.start();
   }
-  start() {
+  async start() {
+    this.keysListeners();
+    await this.initializeState();
+    this.game();
+  }
+
+  initializeState() {
     const board = [];
-    for (let i = 0; i < tableSize * (tableSize - 1); i++) {
+    for (let i = 0; i < tableSize * tableSize; i++) {
       board[i] = null;
     }
     board[startPosition] = BODY;
-    // board[4] = FOOD;
     const snakeBody = [startPosition];
-    this.setState(
-      {
-        board,
-        snakeBody
-      },
-      () => this.gameLogic()
-    );
+    this.setState({
+      board,
+      snakeBody
+    });
   }
 
-  gameLogic() {
+  game() {
     const moveSnake = async () => {
+      // 1. change snake position, remove last position in array and add new to the beginning
+      // 2. respawn food if it is not on the table
+      // 3 check if snake bite itself
+      // 4 check if snake eat food
+      // 5 upgrade state board
+      this.upgradeBoard();
       const nextPosition = this.getNextMovePosition();
-      await this.removeTailAndAddNewHead(nextPosition);
+      this.removeTailAndAddNewHead(nextPosition);
       this.spawnFood();
     };
+    const timer = setInterval(moveSnake, 100);
+  }
 
-    const timer = setInterval(moveSnake, 1500);
+  keysListeners() {
+    document.addEventListener("keydown", e => {
+      const oldDirection = this.state.direction;
+      let newDirection;
+      // if clicked other key than arrows keys, leave old state, thats why i initialize with new direction old direction
+      // need protection for change oposite directory
+      if (
+        (e.keyCode === arrowCode.left && oldDirection === arrowCode.right) ||
+        (e.keyCode === arrowCode.right && oldDirection === arrowCode.left) ||
+        (e.keyCode === arrowCode.down && oldDirection === arrowCode.up) ||
+        (e.keyCode === arrowCode.up && oldDirection === arrowCode.down)
+      ) {
+        newDirection = oldDirection;
+      } else {
+        newDirection = oldDirection;
+        e.keyCode === arrowCode.left && (newDirection = arrowCode.left);
+        e.keyCode === arrowCode.right && (newDirection = arrowCode.right);
+        e.keyCode === arrowCode.up && (newDirection = arrowCode.up);
+        e.keyCode === arrowCode.down && (newDirection = arrowCode.down);
+      }
+      this.setState({
+        direction: newDirection
+      });
+    });
+  }
+
+  upgradeBoard() {
+    const { board, foodPlace, snakeBody } = this.state;
+    for (let i = 0; i < tableSize * tableSize; i++) {
+      board[i] = null;
+    }
+    snakeBody.forEach(square => (board[square] = BODY));
+    foodPlace.forEach(square => (board[square] = FOOD));
   }
 
   removeTailAndAddNewHead(nextPosition) {
@@ -119,15 +162,16 @@ class App extends React.Component {
       const foodSquare = Math.round(Math.random() * freeSquares);
       const squareIndex = availablePlace[foodSquare];
       board[squareIndex] = FOOD;
-      console.log(squareIndex);
+      const foodPlace = [squareIndex];
       this.setState({
-        board
+        board,
+        foodPlace
       });
     }
   }
 
   render() {
-    return <Square />;
+    return <Square board={this.state.board} />;
   }
 }
 

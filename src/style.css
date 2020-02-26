@@ -22,3 +22,13 @@ body {
 .square:nth-child(even) {
     background: grey;
 }
+
+.snakeBody {
+    background: black !important;
+    z-index: 2;
+}
+
+.food {
+    z-index: 1;
+    background: green !important;
+}
